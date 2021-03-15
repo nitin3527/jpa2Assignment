@@ -15,14 +15,21 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
             " ORDER BY age ASC, salary DESC")
     List<Object[]> finadAllEmployee();
 
-    @Modifying
-    @Transactional
-    @Query("update Employee e set e.salary=:salary where e.salary< (select AVG(e.salary) from Employee)")
-    void updateSalaryOfEmployeeLessThanAvg(@Param("salary") double salary);
+    @Query("select avg(salary) from Employee")
+    double findAvgSalary();
 
-    @Modifying
-    @Query("DELETE FROM Employee WHERE salary < (select AVG(salary) FROM Employee)")
-    void deleteEmployeeSalary();
+    @Modifying //Q2 JPQL
+    @Transactional
+    @Query("update Employee set salary=:salary where salary< :findAvgSalary")
+    void updateSalaryOfEmployeeLessThanAvg(@Param("salary") double salary, @Param("findAvgSalary") double findAvgSalary);
+
+    @Query("select min(salary) from Employee")
+    double findMinSalary();
+
+
+    @Modifying// Q3 JPQL
+    @Query("delete from Employee where salary = :findMinSalary")
+    void deleteEmployeeSalary(@Param("findMinSalary") double findMinSalary);
 
     @Query(value = "select empid,empfirstname from employee where " +
             "emplastname like '%singh'", nativeQuery = true)
@@ -32,3 +39,4 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
     @Query(value = "delete from employee where empage>:age", nativeQuery = true)
     void deleteEmployeeHaingAgeGreaterThan(@Param("age") int age);
 }
+

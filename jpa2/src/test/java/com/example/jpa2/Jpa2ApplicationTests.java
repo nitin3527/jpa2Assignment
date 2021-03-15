@@ -36,17 +36,20 @@ class Jpa2ApplicationTests {
 		}
 	}
 	@Test
-	//@Rollback(value = true)
+	@Rollback(value = false)
 	public void testUpdateSalaryOfEmployeeLessThanAvg(){
-		double salary = 6800;
-		repository.updateSalaryOfEmployeeLessThanAvg(salary);
+		double salary = 7500;
+		repository.updateSalaryOfEmployeeLessThanAvg(salary, repository.findAvgSalary());
 	}
 
 	@Test
 	@Transactional
+	@Rollback(value = false)
 	public void testDeleteEmployeeSalary(){
-		repository.deleteEmployeeSalary();
+		repository.deleteEmployeeSalary(repository.findMinSalary());
 	}
+
+
 	@Test
 	public void testgetAllEmployeeWhoesNameEndsWith(){
 		List<Object[]> empData = repository.getAllEmployeeWhoesNameEndsWith();
@@ -109,3 +112,4 @@ class Jpa2ApplicationTests {
 	}
 
 }
+
